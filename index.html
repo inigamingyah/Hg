@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Roblox Marketplace Clone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --radius: 10px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --bg: #f9f9f9;
+      --card-bg: #fff;
+      --accent: #1e90ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;
+      background: #f2f2f2;
+      color: #222;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .menu-icon {
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .tabs {
+      display: flex;
+      gap: 14px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .tabs div {
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 6px;
+      transition: background .2s;
+    }
+    .tabs div:hover {
+      background: #ececec;
+    }
+    .robux-wrapper {
+      position: relative;
+      cursor: pointer;
+    }
+    .robux-icon {
+      width: 32px;
+      height: 32px;
+    }
+    .dropdown {
+      position: absolute;
+      top: 44px;
+      right: 0;
+      width: 230px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      font-size: 14px;
+      user-select: none;
+      z-index: 2000;
+    }
+    .dropdown .header {
+      padding: 14px 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dropdown .header img {
+      width: 20px;
+      height: 20px;
+    }
+    .dropdown .header .amount {
+      font-weight: 700;
+      flex: 1;
+    }
+    .dropdown .option {
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .dropdown .option:hover {
+      background: #f5f5f5;
+    }
+
+    .marketplace {
+      padding: 16px;
+    }
+    .marketplace h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+    }
+    .items {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+    }
+    .item {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .item img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .item h3 {
+      font-size: 14px;
+      margin: 4px 0;
+      flex: 1;
+    }
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .price-row img {
+      width: 16px;
+      height: 16px;
+    }
+    .btn-buy {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      width: 100%;
+    }
+    .btn-buy:disabled {
+      background: gray;
+    }
+    .bought-label {
+      margin-top: 4px;
+      color: green;
+      font-weight: 700;
+      text-align: center;
+      font-size: 13px;
+    }
+    .small {
+      font-size: 12px;
+      color: #555;
+    }
+    @media (max-width: 600px) {
+      .tabs { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="left">
+      <div class="menu-icon">☰</div>
+      <div class="tabs">
+        <div onclick="location.href='#'">Charts</div>
+        <div onclick="location.href='https://www.roblox.com/catalog/'">Marketplace</div>
+        <div onclick="location.href='#'">Create</div>
+      </div>
+    </div>
+    <div class="robux-wrapper" id="robuxToggle">
+      <img src="images (2).png" alt="Robux" class="robux-icon">
+      <!-- dropdown -->
+      <div class="dropdown" id="robuxDropdown">
+        <div class="header">
+          <img src="images (2).png" alt="icon">
+          <div class="amount" id="dropdown-robux-count">145,716</div>
+        </div>
+        <div class="option" onclick="alert('Buy Robux clicked')">Buy Robux</div>
+        <div class="option" onclick="alert('My Transactions clicked')">My Transactions</div>
+        <div class="option" onclick="alert('Redeem Roblox Codes clicked')">Redeem Roblox Codes</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="marketplace">
+    <h2>Marketplace</h2>
+    <div class="items" id="item-container">
+      <!-- JS inserts items -->
+    </div>
+  </div>
+
+  <script>
+    // data
+    const items = [
+      {
+        name: "Oldschool Animation Pack",
+        price: 80,
+        img: "noFilter (1).webp"
+      },
+      {
+        name: "Messy Hair with Headphones (White)",
+        price: 65,
+        img: "noFilter.webp"
+      },
+      {
+        name: "Chibi Stare Face",
+        price: 75,
+        img: "noFilter (3).webp"
+      },
+      {
+        name: "Messy Hair w/ Headphones & Y2K Beanie",
+        price: 95,
+        img: "noFilter (2).webp"
+      }
+    ];
+
+    let robux = 145716;
+    const dropdownCountEl = document.getElementById("dropdown-robux-count");
+    const container = document.getElementById("item-container");
+
+    function formatNumber(n) {
+      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function renderItems() {
+      container.innerHTML = "";
+      items.forEach((item, idx) => {
+        const card = document.createElement("div");
+        card.className = "item";
+        const bought = item.bought || false;
+
+        card.innerHTML = `
+          <img src="${item.img}" alt="${item.name}">
+          <h3>${item.name}</h3>
+          <div class="price-row">
+            <img src="images (2).png" alt="R">
+            <div>${item.price}</div>
+          </div>
+          ${bought 
+            ? `<div class="bought-label">Sudah dibeli</div>` 
+            : `<button class="btn-buy" onclick="buyItem(${idx}, this)">Beli</button>`}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function buyItem(index, btn) {
+      const item = items[index];
+      if (item.bought) return;
+      if (robux >= item.price) {
+        robux -= item.price;
+        item.bought = true;
+        dropdownCountEl.textContent = formatNumber(robux);
+        renderItems();
+      } else {
+        alert("Robux tidak cukup!");
+      }
+    }
+
+    // initial render
+    dropdownCountEl.textContent = formatNumber(robux);
+    renderItems();
+
+    // dropdown toggle
+    const toggle = document.getElementById("robuxToggle");
+    const dropdown = document.getElementById("robuxDropdown");
+    toggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+    document.addEventListener("click", (e) => {
+      if (!toggle.contains(e.target)) {
+        dropdown.style.display = "none";
+      }
+    });
+  </script>
+
+</body>
+</html>
